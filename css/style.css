@@ -1,0 +1,35 @@
+.white.unpressed{
+    fill: white;
+}
+
+.white.pressed{
+    fill: blue;
+}
+
+.black.unpressed{
+    fill: black;
+}
+
+.black.pressed{
+    fill: green;
+}
+
+.noteName.unpressed{
+    font-size: 75%;
+    font-weight: 100;
+}
+
+.noteName.pressed{
+    font-size: 85%;
+    font-weight: 500;
+}
+
+#keyboardBackground{
+    fill: lightgrey;
+    stroke: black;
+}
+
+#board{
+    fill: papayawhip;
+    stroke: black;
+}
