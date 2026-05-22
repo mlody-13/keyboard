@@ -30,12 +30,12 @@
 }
 
 #board{
-    fill: papayawhip;
-    stroke: black;
+    fill: black;
+    stroke: grey;
 }
 
 .shape{
-    stroke: black;
+    stroke: white;
     fill: none;
     stroke-width: 3;
 }
@@ -50,7 +50,7 @@
 }
 
 .theme{
-    fill: black;
+    fill: white;
     font-size: 75%;
     font-weight: 100;
 }
@@ -65,3 +65,10 @@
     fill: green;
 }
 
+body{
+    background-color: black;
+}
+
+#themeText, #waveText, #authorText, #logoText{
+    fill: white;
+}

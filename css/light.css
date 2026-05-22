@@ -3,15 +3,15 @@
 }
 
 .white.pressed{
-    fill: blue;
+    fill: beige;
 }
 
 .black.unpressed{
-    fill: black;
+    fill: gray;
 }
 
 .black.pressed{
-    fill: green;
+    fill: darkgray;
 }
 
 .noteName.unpressed{
@@ -25,12 +25,12 @@
 }
 
 #keyboardBackground{
-    fill: lightgrey;
+    fill: bisque;
     stroke: black;
 }
 
 #board{
-    fill: papayawhip;
+    fill: white;
     stroke: black;
 }
 

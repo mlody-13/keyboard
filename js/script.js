@@ -278,7 +278,7 @@ class Logo
         circlePath.setAttribute("id","circlePath");
         this.logo.appendChild(circlePath);
         const logoText = document.createElementNS(svgNS, "text");
-        logoText.setAttribute("fill", "black");
+        logoText.setAttribute("id", "logoText");
         this.logo.appendChild(logoText);
         const logoTextPath = document.createElementNS(svgNS, "textPath");
         logoTextPath.setAttribute("href", "#circlePath");
@@ -293,6 +293,7 @@ class Logo
         authorText.setAttribute("x", "40%");
         authorText.setAttribute("y", "100%");
         authorText.setAttribute("text-anchor", "middle");
+        authorText.setAttribute("id", "authorText");
         this.logo.appendChild(authorText);
     }
 
@@ -329,18 +330,19 @@ class Space {
 
 class Wave {
 
-    constructor(){
+    constructor(x,y){
 
         this.shape = document.createElementNS(svgNS, "svg");
         this.shape.setAttribute("width", 300);
         this.shape.setAttribute("height", 125);
-        this.shape.setAttribute("x", 200);
-        this.shape.setAttribute("y", 0);
+        this.shape.setAttribute("x", x);
+        this.shape.setAttribute("y", y);
 
         this.text = document.createElementNS(svgNS, "text");
         this.text.setAttribute("x","0");
-        this.text.setAttribute("y","15%");
+        this.text.setAttribute("y","20");
         this.text.textContent = "Fala akustyczna:";
+        this.text.setAttribute("id", "waveText");
         this.shape.appendChild(this.text);
 
         this.sine = document.createElementNS(svgNS, "path");
@@ -392,13 +394,92 @@ class Wave {
 
 }
 
+class Theme
+{
+    constructor(x,y)
+    {
+
+        this.theme = document.createElementNS(svgNS, "svg");
+        this.theme.setAttribute("width", 300);
+        this.theme.setAttribute("height", 125);
+        this.theme.setAttribute("x", x);
+        this.theme.setAttribute("y", y);
+        this.theme.setAttribute("id","themeText");
+
+        this.text = document.createElementNS(svgNS, "text");
+        this.text.setAttribute("x","0");
+        this.text.setAttribute("y","20");
+        this.text.textContent = "Motyw:";
+        this.theme.appendChild(this.text);
+
+        this.classic = document.createElementNS(svgNS, "text");
+        this.classic.setAttribute("class", "theme checked");
+        this.classic.setAttribute("x","0");
+        this.classic.setAttribute("y","40");
+        this.classic.textContent = "klasyczny";
+        this.classic.cssFile = "css/style.css";
+        this.theme.appendChild(this.classic);
+
+        this.light = document.createElementNS(svgNS, "text");
+        this.light.setAttribute("class", "theme");
+        this.light.setAttribute("x","0");
+        this.light.setAttribute("y","60");
+        this.light.textContent = "jasny";
+        this.light.cssFile = "css/light.css";
+        this.theme.appendChild(this.light);
+
+        this.dark = document.createElementNS(svgNS, "text");
+        this.dark.setAttribute("class", "theme");
+        this.dark.setAttribute("x","0");
+        this.dark.setAttribute("y","80");
+        this.dark.textContent = "ciemny";
+        this.dark.cssFile = "css/dark.css";
+        this.theme.appendChild(this.dark);
+
+        this.colorful = document.createElementNS(svgNS, "text");
+        this.colorful.setAttribute("class", "theme");
+        this.colorful.setAttribute("x","0");
+        this.colorful.setAttribute("y","100");
+        this.colorful.textContent = "kolorowy";
+        this.colorful.cssFile = "css/colorful.css";
+        this.theme.appendChild(this.colorful);
+
+        this.addCheck();
+
+    }
+
+    addCheck()
+    {
+        const themes = [this.classic, this.light, this.dark, this.colorful];
+
+        themes.forEach(s => {
+            s.addEventListener("click", () => {
+                document.querySelector(".theme.checked").classList.remove("checked");
+                s.classList.add("checked");
+                document.getElementById("theme").setAttribute("href", s.cssFile);
+            });
+        });
+
+    }
+
+    getSvg()
+    {
+        return this.theme;
+    }
+
+
+}
+
+
+
 //---------------------------------------------------------------------------
 //MAIN
 
 const space = new Space().getSvg();
 space.appendChild((new Keyboard(5,130)).getSvg());
 space.appendChild((new Logo(0,0)).getSvg());
-space.appendChild((new Wave()).getSvg());
+space.appendChild((new Wave(200,0)).getSvg());
+space.appendChild((new Theme(950,0)).getSvg());
 document.body.appendChild(space);
 
 

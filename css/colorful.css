@@ -1,17 +1,17 @@
 .white.unpressed{
-    fill: white;
+    fill: yellow;
 }
 
 .white.pressed{
-    fill: blue;
+    fill: orange;
 }
 
 .black.unpressed{
-    fill: black;
+    fill: blue;
 }
 
 .black.pressed{
-    fill: green;
+    fill: violet;
 }
 
 .noteName.unpressed{
@@ -30,7 +30,7 @@
 }
 
 #board{
-    fill: papayawhip;
+    fill: pink;
     stroke: black;
 }
 
