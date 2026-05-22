@@ -48,12 +48,8 @@ const octave =[
 class Synth
 {
     static audioCtx = new AudioContext();
-    static waveform = "square"; //sine, square, sawtooth, triangle
+    static waveform = "sine"; //sine, square, sawtooth, triangle
 
-    static setWave(type) 
-    {
-        this.waveform = type;
-    }
 }
 
 class Sound 
@@ -331,21 +327,79 @@ class Space {
     }
 }
 
+class Wave {
+
+    constructor(){
+
+        this.shape = document.createElementNS(svgNS, "svg");
+        this.shape.setAttribute("width", 300);
+        this.shape.setAttribute("height", 125);
+        this.shape.setAttribute("x", 200);
+        this.shape.setAttribute("y", 0);
+
+        this.text = document.createElementNS(svgNS, "text");
+        this.text.setAttribute("x","0");
+        this.text.setAttribute("y","15%");
+        this.text.textContent = "Fala akustyczna:";
+        this.shape.appendChild(this.text);
+
+        this.sine = document.createElementNS(svgNS, "path");
+        this.sine.setAttribute("d", "M0 42.5 C4.375 35 13.125 35 17.5 42.5 C21.875 50 30.625 50 35 42.5 C39.375 35 48.125 35 52.5 42.5 C56.875 50 65.625 50 70 42.5 C74.375 35 83.125 35 87.5 42.5 C91.875 50 100.625 50 105 42.5");
+        this.sine.setAttribute("class", "shape checked");
+        this.sine.wave = "sine";
+        this.shape.appendChild(this.sine);
+
+        this.rectangle = document.createElementNS(svgNS, "polyline");
+        this.rectangle.setAttribute("points","0,70 15,70 15,55 30,55 30,70 45,70 45,55 60,55 60,70 75,70 75,55 90,55 90,70 105,70");
+        this.rectangle.setAttribute("class", "shape");
+        this.rectangle.wave = "square";
+        this.shape.appendChild(this.rectangle);
+
+        this.sawTooth = document.createElementNS(svgNS, "polyline");
+        this.sawTooth.setAttribute("points","0,95 20,80 20,95 40,80 40,95 60,80 60,95 80,80 80,95 100,80 100,95");
+        this.sawTooth.setAttribute("class", "shape");
+        this.sawTooth.wave = "sawtooth";
+        this.shape.appendChild(this.sawTooth);
+
+        this.triangle = document.createElementNS(svgNS, "polyline");
+        this.triangle.setAttribute("points","0,120 15,105 30,120 45,105 60,120 75,105 90,120 105,105 ");
+        this.triangle.setAttribute("class", "shape");
+        this.triangle.wave = "triangle";
+        this.shape.appendChild(this.triangle);
+
+        this.addCheck();
+
+    }
+
+    getSvg()
+    {
+        return this.shape;
+    }
+
+    addCheck()
+    {
+        const shapes = [this.sine, this.rectangle, this.sawTooth, this.triangle];
+
+        shapes.forEach(s => {
+            s.addEventListener("click", () => {
+                document.querySelector(".shape.checked").classList.remove("checked");
+                s.classList.add("checked");
+                Synth.waveform = s.wave;
+            });
+        });
+
+    }
+
+}
 
 //---------------------------------------------------------------------------
 //MAIN
 
-        const space = new Space().getSvg();
-        space.appendChild((new Keyboard(5,130)).getSvg());
-        space.appendChild((new Logo(0,0)).getSvg());
-        document.body.appendChild(space);
-
-
-
-        
-
-
-
+const space = new Space().getSvg();
+space.appendChild((new Keyboard(5,130)).getSvg());
+space.appendChild((new Logo(0,0)).getSvg());
+space.appendChild((new Wave()).getSvg());
+document.body.appendChild(space);
 
 
 

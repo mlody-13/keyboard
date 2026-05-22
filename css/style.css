@@ -33,3 +33,18 @@
     fill: papayawhip;
     stroke: black;
 }
+
+.shape{
+    stroke: black;
+    fill: none;
+    stroke-width: 3;
+}
+
+.shape:hover{
+    stroke: yellow;
+    stroke-width: 5;
+}
+
+.shape.checked{
+    stroke: green;
+}
