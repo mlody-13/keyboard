@@ -162,7 +162,7 @@ class Key
     addSound(){
 
         const startEvents = ["pointerdown"];
-        const stopEvents = ["pointerup"]; //, "pointercancel", "pointerleave"
+        const stopEvents = ["pointerup","pointercancel", "pointerleave"]; //, 
 
         startEvents.forEach(
             e => this.rect.addEventListener(
@@ -527,8 +527,16 @@ class ControlPanel {
         this.erase.setAttribute("id", "erase");
         this.controlPanel.appendChild(this.erase);
 
+        this.recordInfo = document.createElementNS(svgNS, "text");
+        this.recordInfo.textContent = "Długość nagrania: " + parseInt(Recording.length/60) + " sek.";
+        this.recordInfo.setAttribute("x","285");
+        this.recordInfo.setAttribute("y","80");
+        this.recordInfo.setAttribute("font-size","50%")
+        this.recordInfo.setAttribute("id", "recordInfo");
+        this.controlPanel.appendChild(this.recordInfo);
+
         this.addEvents();
-        this.addCheck();
+        // this.addCheck();
 
     }
 
@@ -537,31 +545,36 @@ class ControlPanel {
         return this.controlPanel;
     }
 
-    addCheck()
-    {
-        const shapes = [this.record, this.play, this.stop, this.erase];
+    // addCheck()
+    // {
+    //     const shapes = [this.record, this.play, this.stop, this.erase];
 
-        shapes.forEach(s => {
-            s.addEventListener("pointerdown", () => {
-                document.querySelector(".control.checked").classList.remove("checked");
+    //     shapes.forEach(s => {
+    //         s.addEventListener("pointerdown", () => {
+    //             document.querySelector(".control.checked").classList.remove("checked");
 
-                if(s===this.erase){
-                    this.stop.classList.add("checked");
-                } else {
-                    s.classList.add("checked");
-                }
-            });
-        });
+    //             if(s===this.erase){
+    //                 this.stop.classList.add("checked");
+    //             } else {
+    //                 s.classList.add("checked");
+    //             }
+    //         });
+    //     });
 
-    }
+    // }
 
     addEvents()
     {
         this.record.addEventListener(
             "pointerdown",
             () => {
-                if(Recording.isRecording === true) {return;}
-                Recording.startRecording();
+                if(confirm("Czy na pewno chcesz rozpocząć nagrywanie?")){
+                    if(Recording.isRecording === true) {return;}
+                    if(Recording.isPlaying === true) {Recording.stopPlaying();}
+                    document.querySelector(".control.checked").classList.remove("checked");
+                    this.record.classList.add("checked");
+                    Recording.startRecording();
+                }
             }               
         );
 
@@ -569,6 +582,9 @@ class ControlPanel {
             "pointerdown",
             () => {
                 if(Recording.isPlaying === true) {return;}
+                if(Recording.isRecording === true) {Recording.stopRecording();}
+                document.querySelector(".control.checked").classList.remove("checked");
+                this.play.classList.add("checked");
                 Recording.startPlaying();
             }               
         );
@@ -577,14 +593,22 @@ class ControlPanel {
             "pointerdown",
             () => {
                 if(Recording.isRecording === true) {Recording.stopRecording();}
-                if(Recording.isPlaying === true){Recording.stopPlaying();}
+                if(Recording.isPlaying === true) {Recording.stopPlaying();}
+                document.querySelector(".control.checked").classList.remove("checked");
+                this.stop.classList.add("checked");
             }               
         );
 
         this.erase.addEventListener(
             "pointerdown", 
             () => {
-                Recording.eraseRecording();
+                if(Recording.length > 0 && confirm("Czy na pewno chcesz usunąć nagranie?")){
+                    if(Recording.isRecording === true) {Recording.stopRecording();}
+                    if(Recording.isPlaying === true){Recording.stopPlaying();}
+                    document.querySelector(".control.checked").classList.remove("checked");
+                    this.stop.classList.add("checked");
+                    Recording.eraseRecording();
+                }
             }
         );
 
@@ -607,6 +631,7 @@ class Recording {
     static timeStart = Date.now();
     static length = 0; //długość nagrania
     static replay = []; //timeout zawierający nagrania
+    static playId = 0;
 
     static recordingLenUpdate(){
         Recording.length = Recording.records.at(-1)[0];
@@ -626,12 +651,20 @@ class Recording {
         let ms = Date.now() - Recording.timeStart + Recording.length;
         Recording.records.push([ms,null,-1]);
         Recording.recordingLenUpdate();
+        document.getElementById("recordInfo").innerHTML = "Długość nagrania: " + (Recording.length/1000).toFixed(2) + " sek.";
         Recording.isRecording = false;
+    }
+
+    static playIdIncrement(){
+        Recording.playId+=1;
     }
 
     static async startPlaying() 
     {
+
         Recording.isPlaying = true;
+        Recording.playIdIncrement();
+        const myPlayId = Recording.playId;
         for (let i = 0; i < Recording.records.length; i++) {
             const note = Recording.records[i];
 
@@ -652,12 +685,13 @@ class Recording {
             }
         }
         await sleep(Recording.length); // wstrzymanie na czas puszczenia nagrania
-        if(Recording.isPlaying === true) {Recording.stopPlaying()};
+        if(myPlayId === Recording.playId && Recording.isPlaying) {Recording.stopPlaying()};
     }
 
     static eraseRecording(){
         Recording.records = [[0, null, -1]];
         Recording.recordingLenUpdate();
+        document.getElementById("recordInfo").innerText = "Długość nagrania: " + parseInt(Recording.length/60) + " sek.";
     }
 
     static stopPlaying(){
