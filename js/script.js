@@ -566,13 +566,13 @@ class ControlPanel {
         this.record.addEventListener(
             "pointerdown",
             () => {
-                if(confirm("Czy na pewno chcesz rozpocząć nagrywanie?")){
+                //if(confirm("Czy na pewno chcesz rozpocząć nagrywanie?")){
                     if(Recording.isRecording === true) {return;}
                     if(Recording.isPlaying === true) {Recording.stopPlaying();}
                     document.querySelector(".control.checked").classList.remove("checked");
                     this.record.classList.add("checked");
                     Recording.startRecording();
-                }
+                //}
             }               
         );
 
@@ -600,13 +600,13 @@ class ControlPanel {
         this.erase.addEventListener(
             "pointerdown", 
             () => {
-                if(Recording.length > 0 && confirm("Czy na pewno chcesz usunąć nagranie?")){
+                //if(Recording.length > 0 && confirm("Czy na pewno chcesz usunąć nagranie?")){
                     if(Recording.isRecording === true) {Recording.stopRecording();}
                     if(Recording.isPlaying === true){Recording.stopPlaying();}
                     document.querySelector(".control.checked").classList.remove("checked");
                     this.stop.classList.add("checked");
                     Recording.eraseRecording();
-                }
+                //}
             }
         );
 
