@@ -1,32 +1,7 @@
-.white.unpressed{
-    fill: white;
-}
+/* TŁA */
 
-.white.pressed{
-    fill: blue;
-}
-
-.black.unpressed{
-    fill: black;
-}
-
-.black.pressed{
-    fill: green;
-}
-
-.noteName.unpressed{
-    font-size: 75%;
-    font-weight: 100;
-}
-
-.noteName.pressed{
-    font-size: 85%;
-    font-weight: 500;
-}
-
-#keyboardBackground{
-    fill: lightgrey;
-    stroke: black;
+body{
+    background-color: white;
 }
 
 #board{
@@ -34,35 +9,68 @@
     stroke: black;
 }
 
+#keyboardBackground{
+    fill: burlywood;
+    stroke: black;
+}
+
+/* TEKSTY */
+
+#themeText, #waveText, #authorText, #logoText, #recordInfo {
+    fill: black;
+}
+
+/* KLAWISZE */
+.white.unpressed{
+    fill: white;
+}
+
+.white.pressed{
+    fill: chocolate;
+}
+
+.black.unpressed{
+    fill: black;
+}
+
+.black.pressed{
+    fill: maroon;
+}
+
+.key {  /* obwoluta klawiszy */
+    stroke: black;
+}
+
+/* FALE AKUSTYCZNE */
+
 .shape{
     stroke: black;
-    fill: none;
-    stroke-width: 3;
 }
 
 .shape:hover{
     stroke: red;
-    stroke-width: 5;
 }
 
 .shape.checked{
     stroke: green;
 }
 
+/* PANEL KONTROLNY*/
+
+.control{
+    fill: black;
+}
+
+/* MOTYW */
+
 .theme{
     fill: black;
-    font-size: 75%;
-    font-weight: 100;
 }
 
 .theme:hover{
     fill: red;
-    font-size: 95%;
-    font-weight: 1000;
-    cursor: pointer;
 }
 
 .theme.checked{
     fill: green;
 }
-

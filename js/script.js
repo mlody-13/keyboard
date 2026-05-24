@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 //ZMIENNE GLOBALNE
 
@@ -51,7 +50,6 @@ class Synth
 {
     static audioCtx = new AudioContext();
     static waveform = "sine"; //sine, square, sawtooth, triangle
-
 }
 
 class Sound 
@@ -131,7 +129,7 @@ class Key
         this.rect.setAttribute("y", Key.noteNameHeight);
         this.rect.setAttribute("width", width);
         this.rect.setAttribute("height", height);
-        this.rect.setAttribute("stroke", "black");
+//        this.rect.setAttribute("stroke", "black");
         this.rect.setAttribute("class", "key " + cssClass);
         this.rect.sound = sound;
         this.rect.setAttribute("id", sound.noteName);
@@ -141,8 +139,8 @@ class Key
         this.text = document.createElementNS(svgNS, "text");
         this.text.setAttribute("x", "50%");
         this.text.setAttribute("y", 10);
-        this.text.setAttribute("text-anchor", "middle");
-        this.text.setAttribute("font-family", "Arial");
+        // this.text.setAttribute("text-anchor", "middle");
+        // this.text.setAttribute("font-family", "Arial");
         this.text.setAttribute("class", "noteName " + cssClass);
         this.text.textContent = sound.noteName;
         this.svg.appendChild(this.text);
@@ -300,7 +298,7 @@ class Logo
         logoTextPath.textContent = "TECHNIKI MULTIMEDIALNE";
         logoText.appendChild(logoTextPath);
         const authorText = document.createElementNS(svgNS, "text");
-        authorText.setAttribute("fill","black");
+//        authorText.setAttribute("fill","black");
         authorText.textContent = "Tomasz Kutrzeba";
         authorText.setAttribute("x", "40%");
         authorText.setAttribute("y", "100%");
@@ -714,8 +712,6 @@ class Recording {
 
     }
 }
-
-
 
 //---------------------------------------------------------------------------
 //MAIN

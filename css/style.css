@@ -1,21 +1,33 @@
+/* NOTACJA */
 
-.theme:hover{
-    fill: red;
-    font-size: 95%;
-    font-weight: 1000;
-    cursor: pointer;
+.noteName{
+    text-anchor: middle;
+    font-family: Arial;
+}
+
+.noteName.unpressed{
+    font-size: 75%;
+    font-weight: 100;
+}
+
+.noteName.pressed{
+    font-size: 85%;
+    font-weight: 500;
+}
+
+/* FALE AKUSTYCZNE*/
+
+.shape{
+    fill: none;
+    stroke-width: 3;
 }
 
 .shape:hover{
-    stroke: red;
     stroke-width: 5;
     cursor: pointer;
 }
 
-
-#record{
-    fill: red;
-}
+/* PANEL KONTROLNY */
 
 .control:hover{
     stroke: orange;
@@ -26,4 +38,21 @@
 .control.checked{
     stroke: green;
     stroke-width: 3;
+}
+
+#record{
+    fill: red;
+}
+
+/* MOTYWY */
+
+.theme{
+    font-size: 75%;
+    font-weight: 100;
+}
+
+.theme:hover{
+    font-size: 95%;
+    font-weight: 1000;
+    cursor: pointer;
 }
