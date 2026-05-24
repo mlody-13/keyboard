@@ -690,8 +690,8 @@ class Recording {
 
     static eraseRecording(){
         Recording.records = [[0, null, -1]];
-        Recording.recordingLenUpdate();
-        document.getElementById("recordInfo").innerText = "Długość nagrania: " + parseInt(Recording.length/60) + " sek.";
+        Recording.recordingLenUpdate(); 
+        document.getElementById("recordInfo").innerHTML = "Długość nagrania: " + (Recording.length/1000).toFixed(2) + " sek.";
     }
 
     static stopPlaying(){
