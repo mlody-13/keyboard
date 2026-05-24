@@ -1,67 +1,29 @@
-.white.unpressed{
-    fill: white;
-}
-
-.white.pressed{
-    fill: blue;
-}
-
-.black.unpressed{
-    fill: black;
-}
-
-.black.pressed{
-    fill: green;
-}
-
-.noteName.unpressed{
-    font-size: 75%;
-    font-weight: 100;
-}
-
-.noteName.pressed{
-    font-size: 85%;
-    font-weight: 500;
-}
-
-#keyboardBackground{
-    fill: lightgrey;
-    stroke: black;
-}
-
-#board{
-    fill: papayawhip;
-    stroke: black;
-}
-
-.shape{
-    stroke: black;
-    fill: none;
-    stroke-width: 3;
-}
-
-.shape:hover{
-    stroke: red;
-    stroke-width: 5;
-}
-
-.shape.checked{
-    stroke: green;
-}
-
-.theme{
-    fill: black;
-    font-size: 75%;
-    font-weight: 100;
-}
 
 .theme:hover{
     fill: red;
     font-size: 95%;
     font-weight: 1000;
+    cursor: pointer;
 }
 
-.theme.checked{
-    fill: green;
+.shape:hover{
+    stroke: red;
+    stroke-width: 5;
+    cursor: pointer;
 }
 
+
+#record{
+    fill: red;
+}
+
+.control:hover{
+    stroke: orange;
+    stroke-width: 3;
+    cursor: pointer;
+}
+
+.control.checked{
+    stroke: green;
+    stroke-width: 3;
+}

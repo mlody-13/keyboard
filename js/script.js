@@ -159,20 +159,23 @@ class Key
     //wprowadzanie dźwięków
     addSound(){
 
-        const startEvents = ["mousedown", "pointerdown"];
-        const stopEvents = ["mouseup", "mouseleave", "pointerup", "pointercancel", "pointerleave"];
+        const startEvents = ["pointerdown"];
+        const stopEvents = ["pointerup", "pointercancel", "pointerleave"];
 
         startEvents.forEach(
             e => this.rect.addEventListener(
                 e, 
                 () => {
-                    this.rect.sound.start();
                     //zmiana koloru klawisza
                     this.rect.classList.remove("unpressed");
                     this.rect.classList.add("pressed");
                     //zmiana koloru ttonacji
                     this.text.classList.remove("unpressed");
                     this.text.classList.add("pressed");
+
+                    if (Recording.isPlaying){ return; }
+                    this.rect.sound.start();
+                    Recording.recorded.push([Date.now(),this.rect,1]);
                 }
                 
             )
@@ -182,13 +185,16 @@ class Key
             e => this.rect.addEventListener(
                 e, 
                 () => {
-                    this.rect.sound.stop();
                     //zmiana koloru klawisza
                     this.rect.classList.remove("pressed");
                     this.rect.classList.add("unpressed");
                     //zmiana koloru tonacji
                     this.text.classList.remove("pressed");
                     this.text.classList.add("unpressed");
+
+                    if (Recording.isPlaying){ return; }
+                    this.rect.sound.stop();
+                    Recording.recorded.push([Date.now(),this.rect,0]);
                 }
             )
         );
@@ -295,12 +301,14 @@ class Logo
         authorText.setAttribute("text-anchor", "middle");
         authorText.setAttribute("id", "authorText");
         this.logo.appendChild(authorText);
+
     }
 
     getSvg()
     {
         return this.logo;
     }
+    
 
 }
 class Space {
@@ -417,7 +425,7 @@ class Theme
         this.classic.setAttribute("x","0");
         this.classic.setAttribute("y","40");
         this.classic.textContent = "klasyczny";
-        this.classic.cssFile = "css/style.css";
+        this.classic.cssFile = "css/classic.css";
         this.theme.appendChild(this.classic);
 
         this.light = document.createElementNS(svgNS, "text");
@@ -453,7 +461,7 @@ class Theme
         const themes = [this.classic, this.light, this.dark, this.colorful];
 
         themes.forEach(s => {
-            s.addEventListener("click", () => {
+            s.addEventListener("pointerdown", () => {
                 document.querySelector(".theme.checked").classList.remove("checked");
                 s.classList.add("checked");
                 document.getElementById("theme").setAttribute("href", s.cssFile);
@@ -470,6 +478,140 @@ class Theme
 
 }
 
+class ControlPanel {
+
+    constructor(x,y)
+    {
+
+        this.controlPanel = document.createElementNS(svgNS, "svg");
+        this.controlPanel.setAttribute("width", 400);
+        this.controlPanel.setAttribute("height", 125);
+        this.controlPanel.setAttribute("x", x);
+        this.controlPanel.setAttribute("y", y);
+
+        this.record = document.createElementNS(svgNS, "circle");
+        this.record.setAttribute("cx","30");
+        this.record.setAttribute("cy","55");
+        this.record.setAttribute("r","25");
+        this.record.setAttribute("class", "control");
+        this.record.setAttribute("id", "record");
+        this.controlPanel.appendChild(this.record);
+
+        this.play = document.createElementNS(svgNS, "polygon");
+        this.play.setAttribute("points"," 100,30 140,55 100,80");
+        this.play.setAttribute("class", "control");
+        this.play.setAttribute("id", "play");
+        this.controlPanel.appendChild(this.play);
+
+        this.stop = document.createElementNS(svgNS, "rect");
+        this.stop.setAttribute("x","185");
+        this.stop.setAttribute("y","30");
+        this.stop.setAttribute("width","55");
+        this.stop.setAttribute("height","50");
+        this.stop.setAttribute("class", "control checked");
+        this.stop.setAttribute("id", "stop");
+        this.controlPanel.appendChild(this.stop);
+
+        this.erase = document.createElementNS(svgNS, "text");
+        this.erase.textContent = "KASUJ";
+        this.erase.setAttribute("x","285");
+        this.erase.setAttribute("y","60");
+        this.erase.setAttribute("font-size","150%")
+        this.erase.setAttribute("class", "control");
+        this.erase.setAttribute("id", "erase");
+        this.controlPanel.appendChild(this.erase);
+
+        this.addCheck();
+        this.addEvents();
+
+    }
+
+    getSvg()
+    {
+        return this.controlPanel;
+    }
+
+    addCheck()
+    {
+        const shapes = [this.record, this.play, this.stop, this.erase];
+
+        shapes.forEach(s => {
+            s.addEventListener("pointerdown", () => {
+                document.querySelector(".control.checked").classList.remove("checked");
+
+                if(s===this.erase){
+                    this.stop.classList.add("checked");
+                } else {
+                    s.classList.add("checked");
+                }
+            });
+        });
+
+    }
+
+    addEvents()
+    {
+        this.erase.addEventListener(
+            "pointerdown", 
+            () => {
+                if(confirm("Czy na pewno chcesz usunąć nagranie?")){
+
+                }
+            }
+        );
+
+        this.record.addEventListener(
+            "pointerdown",
+            () => {
+                if(confirm("Czy na pewno chcesz rozpocząć nagrywanie?")){
+
+                }
+            }               
+        );
+
+    }
+
+}
+
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+}
+
+class Recording {
+
+    static recorded = []; 
+    static isPlaying = false;
+
+
+    async play() 
+    {
+
+        Recording.isPlaying = true;
+
+        for (let i = 0; i < Recording.recorded.length; i++) {
+
+
+            const note = Recording.recorded[i];
+
+            if(note[2]===0){
+                continue;
+            }
+
+            note[1].sound.start();
+            note[1].dispatchEvent(new Event("mousedown"));
+
+            await sleep(1000); // czas trwania dźwięku
+
+            note[1].sound.stop();
+            note[1].dispatchEvent(new Event("mouseup"));
+
+        }
+
+        Recording.isPlaying = false;
+    }
+
+}
+
 
 
 //---------------------------------------------------------------------------
@@ -480,7 +622,9 @@ space.appendChild((new Keyboard(5,130)).getSvg());
 space.appendChild((new Logo(0,0)).getSvg());
 space.appendChild((new Wave(200,0)).getSvg());
 space.appendChild((new Theme(950,0)).getSvg());
+space.appendChild((new ControlPanel(400,0)).getSvg());
 document.body.appendChild(space);
+
 
 
 
