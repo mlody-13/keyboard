@@ -1,5 +1,7 @@
 
-//zmienna globalna
+//------------------------------------------------------------------------------
+//ZMIENNE GLOBALNE
+
 const svgNS = "http://www.w3.org/2000/svg";
 
 const octave =[
@@ -43,7 +45,7 @@ const octave =[
 ];
 
 //------------------------------------------------------------------------------
-//KLASY
+//KLASY TWORZĄCE SYNTEZATOR
 
 class Synth
 {
@@ -160,7 +162,7 @@ class Key
     addSound(){
 
         const startEvents = ["pointerdown"];
-        const stopEvents = ["pointerup", "pointercancel", "pointerleave"];
+        const stopEvents = ["pointerup"]; //, "pointercancel", "pointerleave"
 
         startEvents.forEach(
             e => this.rect.addEventListener(
@@ -172,10 +174,12 @@ class Key
                     //zmiana koloru ttonacji
                     this.text.classList.remove("unpressed");
                     this.text.classList.add("pressed");
-
-                    if (Recording.isPlaying){ return; }
+                    //brak rozpoczęcia dźwięku w przypadku odtwarzania
+                    //if (Recording.isPlaying){ return; }
+                    //URUCHOMIENIE DŹWiĘKU
                     this.rect.sound.start();
-                    Recording.recorded.push([Date.now(),this.rect,1]);
+                    //zapis dźwięku w przypadku nagrywania
+                    if (Recording.isRecording){ Recording.addRecord(this.rect,1) };
                 }
                 
             )
@@ -191,10 +195,12 @@ class Key
                     //zmiana koloru tonacji
                     this.text.classList.remove("pressed");
                     this.text.classList.add("unpressed");
-
-                    if (Recording.isPlaying){ return; }
+                    //brak rozpoczęcia dźwięku w przypadku odtwarzania
+                    //if (Recording.isPlaying){ return; }
+                    //ZATRZYMANIE DŹWiĘKU
                     this.rect.sound.stop();
-                    Recording.recorded.push([Date.now(),this.rect,0]);
+                    //zapis dźwięku w przypadku nagrywania
+                    if (Recording.isRecording){ Recording.addRecord(this.rect,0) };
                 }
             )
         );
@@ -521,8 +527,8 @@ class ControlPanel {
         this.erase.setAttribute("id", "erase");
         this.controlPanel.appendChild(this.erase);
 
-        this.addCheck();
         this.addEvents();
+        this.addCheck();
 
     }
 
@@ -551,27 +557,43 @@ class ControlPanel {
 
     addEvents()
     {
-        this.erase.addEventListener(
-            "pointerdown", 
-            () => {
-                if(confirm("Czy na pewno chcesz usunąć nagranie?")){
-
-                }
-            }
-        );
-
         this.record.addEventListener(
             "pointerdown",
             () => {
-                if(confirm("Czy na pewno chcesz rozpocząć nagrywanie?")){
-
-                }
+                if(Recording.isRecording === true) {return;}
+                Recording.startRecording();
             }               
+        );
+
+        this.play.addEventListener(
+            "pointerdown",
+            () => {
+                if(Recording.isPlaying === true) {return;}
+                Recording.startPlaying();
+            }               
+        );
+
+        this.stop.addEventListener(
+            "pointerdown",
+            () => {
+                if(Recording.isRecording === true) {Recording.stopRecording();}
+                if(Recording.isPlaying === true){Recording.stopPlaying();}
+            }               
+        );
+
+        this.erase.addEventListener(
+            "pointerdown", 
+            () => {
+                Recording.eraseRecording();
+            }
         );
 
     }
 
 }
+
+//------------------------------------------------------------------------------
+//KLASY DOTYCZĄCE NAGRYWANIA I ODTWARZANIA MUZYKI
 
 function sleep(ms) {
     return new Promise(r => setTimeout(r, ms));
@@ -579,37 +601,84 @@ function sleep(ms) {
 
 class Recording {
 
-    static recorded = []; 
+    static records = [[0, null, -1]]; //nagranie
     static isPlaying = false;
+    static isRecording = false;
+    static timeStart = Date.now();
+    static length = 0; //długość nagrania
+    static replay = []; //timeout zawierający nagrania
 
-
-    async play() 
-    {
-
-        Recording.isPlaying = true;
-
-        for (let i = 0; i < Recording.recorded.length; i++) {
-
-
-            const note = Recording.recorded[i];
-
-            if(note[2]===0){
-                continue;
-            }
-
-            note[1].sound.start();
-            note[1].dispatchEvent(new Event("mousedown"));
-
-            await sleep(1000); // czas trwania dźwięku
-
-            note[1].sound.stop();
-            note[1].dispatchEvent(new Event("mouseup"));
-
-        }
-
-        Recording.isPlaying = false;
+    static recordingLenUpdate(){
+        Recording.length = Recording.records.at(-1)[0];
     }
 
+    static addRecord(record,type){
+        let ms = Date.now() - Recording.timeStart + Recording.length;
+        Recording.records.push([ms,record,type]);
+    }
+
+    static startRecording(){
+        Recording.isRecording = true;
+        Recording.timeStart = Date.now();
+    }
+
+    static stopRecording(){
+        let ms = Date.now() - Recording.timeStart + Recording.length;
+        Recording.records.push([ms,null,-1]);
+        Recording.recordingLenUpdate();
+        Recording.isRecording = false;
+    }
+
+    static async startPlaying() 
+    {
+        Recording.isPlaying = true;
+        for (let i = 0; i < Recording.records.length; i++) {
+            const note = Recording.records[i];
+
+            if(note[2]===1){
+                Recording.replay.push(
+                    setTimeout(() => {
+                        note[1].dispatchEvent(new Event("pointerdown"));
+                    }, 
+                    note[0])
+                );  
+            } else if (note[2]===0) {
+                Recording.replay.push(
+                    setTimeout(() => {
+                        note[1].dispatchEvent(new Event("pointerup"));
+                    }, 
+                    note[0])
+                );  
+            }
+        }
+        await sleep(Recording.length); // wstrzymanie na czas puszczenia nagrania
+        if(Recording.isPlaying === true) {Recording.stopPlaying()};
+    }
+
+    static eraseRecording(){
+        Recording.records = [[0, null, -1]];
+        Recording.recordingLenUpdate();
+    }
+
+    static stopPlaying(){
+
+        for (let i = 0; i < Recording.replay.length; i++) 
+        {
+            clearTimeout(Recording.replay[i]);        
+        }
+        for (let i = 0; i < Recording.records.length; i++) {
+            const note = Recording.records[i];
+            if(note[2]===0){
+                note[1].dispatchEvent(new Event("pointerup"));
+            }
+        }
+
+        Recording.replay = [];
+        Recording.isPlaying = false;
+        document.querySelector(".control.checked").classList.remove("checked");
+        document.getElementById("stop").classList.add("checked");
+
+    }
 }
 
 
