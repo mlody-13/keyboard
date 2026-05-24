@@ -1,8 +1,15 @@
+/* TEKSTY */
+
+#themeText, #waveText, #authorText, #logoText, #recordInfo {
+    user-select: none;
+}
+
 /* NOTACJA */
 
 .noteName{
     text-anchor: middle;
     font-family: Arial;
+    user-select: none;
 }
 
 .noteName.unpressed{
@@ -20,19 +27,28 @@
 .shape{
     fill: none;
     stroke-width: 3;
+    user-select: none;
 }
 
-.shape:hover{
-    stroke-width: 5;
-    cursor: pointer;
+@media (hover: hover) {
+    .shape:hover{
+        stroke-width: 5;
+        cursor: pointer;
+    }   
 }
 
 /* PANEL KONTROLNY */
 
-.control:hover{
-    stroke: orange;
-    stroke-width: 3;
-    cursor: pointer;
+.control{
+    user-select: none;
+}
+
+@media (hover: hover) {
+    .control:hover{
+        stroke: orange;
+        stroke-width: 3;
+        cursor: pointer;
+    }
 }
 
 .control.checked{
@@ -49,10 +65,13 @@
 .theme{
     font-size: 75%;
     font-weight: 100;
+    user-select: none;
 }
 
-.theme:hover{
-    font-size: 95%;
-    font-weight: 1000;
-    cursor: pointer;
+@media (hover: hover) {
+    .theme:hover{
+        font-size: 95%;
+        font-weight: 1000;
+        cursor: pointer;
+    }
 }
