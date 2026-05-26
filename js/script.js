@@ -353,7 +353,7 @@ class Wave {
         this.text = document.createElementNS(svgNS, "text");
         this.text.setAttribute("x","0");
         this.text.setAttribute("y","20");
-        this.text.textContent = "Fala akustyczna:";
+        this.text.textContent = "Fala dźwiękowa:";
         this.text.setAttribute("id", "waveText");
         this.shape.appendChild(this.text);
 
